@@ -1,0 +1,122 @@
+from news.models import *
+
+1. Создать двух пользователей (с помощью метода User.objects.create_user('username')).
+
+user1 = User.objects.create_user('User01')
+user2 = User.objects.create_user('User02')
+
+2. Создать два объекта модели Author, связанные с пользователями.
+
+author1 = Author.objects.create(author_user=user1)
+author2 = Author.objects.create(author_user=user2)
+
+3. Добавить 4 категории в модель Category.
+
+category1 = Category.objects.create(category_name='Спорт')
+category2 = Category.objects.create(category_name='Обо всем понемногу')
+category3 = Category.objects.create(category_name='Образование')
+category4 = Category.objects.create(category_name='Наука и технологии')
+
+4. Добавить 2 статьи и 1 новость.
+
+post_text="""Главный тренер «Реала» Карло Анчелотти стал рекордсменом Лиги чемпионов по количеству проведенных матчей.
+Ответный матч с «Манчестер Сити» в полуфинале ЛЧ стал для итальянца 191-м в карьере.
+Он обошел Алекса Фергюсона (190), который провел все матчи в качестве главного тренера «Манчестер Юнайтед».
+Замыкает тройку по количеству матчей в ЛЧ бывший главный тренер «Арсенала» Арсен Венгер — 184. В топ-5 входят Хосеп Гвардиола (160) и Жозе Моуринью (145)."""
+
+post1 = Post.objects.create(post_author=author1, post_type=Post.news, post_header='Анчелотти стал рекордсменом по количеству матчей в Лиге чемпионов', post_text=post_text)
+
+post_text="""Совершенствование российской системы образования – одна из приоритетных задач современной России. 
+Чтобы сделать высшее образование более привлекательным для иностранных абитуриентов, в стране реализуется проект «Экспорт российского образования». 
+Правительство РФ старается обеспечить зарубежным студентам максимально комфортные условия пребывания на территории страны. 
+Так, в декабре 2017 года был принят закон, облегчающий процедуру продления студенческой визы для иностранных учащихся. 
+Кроме того, в ближайшее время планируется упростить выдачу паспортов РФ талантливым иностранным выпускникам российских вузов."""
+
+post2 = Post.objects.create(post_author=author2, post_header='Развитие российского высшего образования', post_text=post_text)
+
+post_text="""Природа возникновения одних из самых ярких объектов во Вселенной — квазаров — была раскрыта спустя 60 лет после их открытия. 
+Об этом сообщили ученые из университетов Шеффилда и Хартфордшира в Великобритании.
+Они использовали данные, полученные с помощью телескопа Исаака Ньютона в Ла-Пальме. 
+Ученые сравнили результаты наблюдения за 48 квазарами и их родительскими галактиками и снимки похожих галактик, в которых нет квазаров.
+Оказалось, что во внешних областях первых наблюдались искаженные структуры, что может указывать на недавнее столкновение между галактиками.
+Большинство галактик имеют сверхмассивные черные дыры внутри и значительное количество газа. 
+При столкновении он устремляется к черной дыре и выделяется большое количество энергии в виде излучения. 
+Оно и выступает характерным для квазара блеском, полагают ученые."""
+
+post3 = Post.objects.create(post_author=author2, post_header='Астрофизики раскрыли тайну одних из самых ярких объектов во Вселенной', post_text=post_text)
+
+5. Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+
+post1.post_category.add(category1)
+post1.post_category.add(category2)
+post2.post_category.add(category3)
+post2.post_category.add(category2)
+post3.post_category.add(category4)
+post3.post_category.add(category2)
+
+6. Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+
+comment1 = Comment.objects.create(comment_post=post1, comment_author=user2, comment_text='Прочитал его книгу, где он повествует о своей управленческой карьере, о методах работы, победах, партнёрах.')
+
+comment2 = Comment.objects.create(comment_post=post2, comment_author=user1, comment_text='Спасибо, очень познавательная статья!')
+
+comment3 = Comment.objects.create(comment_post=post3, comment_author=user1, comment_text='Как интересно узнать про мир вокруг нас!')
+
+comment4 = Comment.objects.create(comment_post=post3, comment_author=user2, comment_text='Да, я получил истинное удовольствие, изучая этот вопрос.')
+
+7. Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+
+for i in range(10):
+    post1.like()
+
+for i in range(20):
+    post2.like()
+
+for i in range(30):
+    post3.like()
+
+post1.dislike()
+post2.dislike()
+post3.dislike()
+
+for i in range(5):
+    comment1.like()
+
+comment1.dislike()
+
+for i in range(5):
+    comment2.like()
+
+comment2.dislike()
+
+for i in range(7):
+    comment3.like()
+
+comment3.dislike()
+
+for i in range(8):
+    comment4.like()
+
+comment4.dislike()
+
+8. Обновить рейтинги пользователей.
+
+for author in Author.objects.all():
+    author.update_rating()
+
+9. Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+
+Author.objects.all().order_by('-author_rating').values('author_user__username','author_rating')[0]
+
+10. Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+
+Post.objects.all().order_by('-post_rating').values('post_create_date', 'post_author__author_user__username', 'post_rating', 'post_header')[0]
+Post.objects.all().order_by('-post_rating')[0].preview()
+
+11. Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+
+Post.objects.all().order_by('-post_rating')[0].comment_set.all().values('comment_create_date', 'comment_author__username', 'comment_text')
+
+
+
+
